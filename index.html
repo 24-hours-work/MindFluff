@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>MindFluff — освободи ум</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f3ef;
+            padding: 1rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .input-card {
+            background: white;
+            border-radius: 2rem;
+            padding: 1.8rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            margin-bottom: 1.5rem;
+            border: 1px solid #f0ebe3;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+            color: #2c3a2f;
+            margin-bottom: 0.5rem;
+        }
+
+        .philosophy {
+            font-size: 0.9rem;
+            color: #8b7a6b;
+            font-style: italic;
+            margin-bottom: 1.2rem;
+            padding-left: 0.3rem;
+            border-left: 3px solid #cbbfaa;
+        }
+
+        textarea {
+            width: 100%;
+            border: 1px solid #e8e0d5;
+            border-radius: 1.25rem;
+            padding: 1rem;
+            font-size: 0.9rem;
+            font-family: inherit;
+            resize: vertical;
+            background: #fefcf8;
+            margin-bottom: 1rem;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #b7aa95;
+        }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 2rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.1s;
+            font-size: 0.85rem;
+        }
+
+        .btn-primary {
+            background: #5e4b3a;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4a3a2d;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 1rem;
+            font-size: 0.8rem;
+            background: #ece5db;
+        }
+
+        .stats {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .stat-number {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #5e4b3a;
+        }
+
+        .calendar {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        .day {
+            width: 28px;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            background: #f0ebe4;
+        }
+
+        .day.active {
+            background: #5e4b3a;
+            color: white;
+        }
+
+        .section {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1rem 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-weight: 600;
+            margin-bottom: 0.7rem;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #f0ebe4;
+            padding-bottom: 0.4rem;
+            font-size: 0.9rem;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f5f2ed;
+        }
+
+        .task-left {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex: 1;
+        }
+
+        .task-check {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #d6cec2;
+            background: white;
+            cursor: pointer;
+        }
+
+        .task-check.completed {
+            background: #5e4b3a;
+            border-color: #5e4b3a;
+            position: relative;
+        }
+
+        .task-check.completed::after {
+            content: "✓";
+            color: white;
+            font-size: 11px;
+            display: flex;
+            justify-content: center;
+            line-height: 16px;
+        }
+
+        .task-text {
+            font-size: 0.85rem;
+        }
+
+        .task-text.completed {
+            text-decoration: line-through;
+            color: #b9aea0;
+        }
+
+        .task-category {
+            font-size: 0.6rem;
+            background: #f0ebe4;
+            padding: 0.15rem 0.5rem;
+            border-radius: 1rem;
+        }
+
+        .empty-message {
+            color: #b9aea0;
+            text-align: center;
+            padding: 0.8rem;
+            font-size: 0.75rem;
+        }
+
+        .compliment {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #a28f7a;
+            margin-top: 0.8rem;
+            font-style: italic;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.6rem;
+            color: #c2b6a6;
+            margin-top: 1.2rem;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c3a2f;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            opacity: 0;
+            transition: 0.2s;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s;
+        }
+
+        .modal.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: 2rem;
+            max-width: 320px;
+            width: 85%;
+            padding: 1.8rem;
+            text-align: center;
+            box-shadow: 0 25px 40px rgba(0,0,0,0.2);
+        }
+
+        .modal-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-number {
+            background: #f0ebe4;
+            padding: 0.8rem;
+            border-radius: 1rem;
+            font-family: monospace;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            margin: 1rem 0;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: #5e4b3a;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: 1px solid #d6cec2;
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="input-card">
+    <h1>🧠 MindFluff</h1>
+    <div class="philosophy">«Твои мысли — не враги. Они просто хотят, чтобы их услышали. Запиши — и они перестанут шуметь в голове.»</div>
+    <textarea id="brainInput" rows="3" placeholder="купить молоко&#10;срочно позвонить клиенту&#10;боюсь не успеть с отчётом&#10;что если сделать приложение для встреч?&#10;https://youtu.be/... посмотреть&#10;хочу научиться играть на гитаре"></textarea>
+    <div class="button-row">
+        <button id="processBtn" class="btn btn-primary">➕ Добавить мысли</button>
+        <button id="clearWorriesBtn" class="btn btn-sm">🧹 Убрать тревоги</button>
+        <button id="supportBtn" class="btn btn-sm" style="background:#fef3c7;">☕ Поддержать</button>
+    </div>
+</div>
+
+<div class="stats" id="statsPanel">
+    <div>📖 <span id="totalCount">0</span> мыслей</div>
+    <div>✓ <span id="doneCount">0</span> выполнено</div>
+    <div>🔥 <span id="streakCount">0</span> дней подряд</div>
+</div>
+
+<div id="calendarPanel" class="stats" style="justify-content: flex-start; gap: 0.5rem;">
+    <div style="font-size:0.7rem;">📅 последние 7 дней:</div>
+    <div id="calendarDays" class="calendar"></div>
+</div>
+
+<div id="tasksSection" class="section">
+    <div class="section-title">
+        <span>📋 Задачи</span>
+        <span id="tasksLeftBadge" style="background:#f0ebe4; padding:0.2rem 0.6rem; border-radius:1rem; font-size:0.7rem;">0 осталось</span>
+    </div>
+    <div id="tasksList"></div>
+</div>
+
+<div id="ideasSection" class="section">
+    <div class="section-title">💡 Идеи</div>
+    <div id="ideasList"></div>
+</div>
+
+<div id="worriesSection" class="section">
+    <div class="section-title">🌿 Тревоги (с шагом)</div>
+    <div id="worriesList"></div>
+</div>
+
+<div id="dreamsSection" class="section">
+    <div class="section-title">🌟 Мечты</div>
+    <div id="dreamsList"></div>
+</div>
+
+<div id="linksSection" class="section">
+    <div class="section-title">🔗 Ссылки</div>
+    <div id="linksList"></div>
+</div>
+
+<div class="compliment" id="complimentMsg">✨ выдохни. запиши. освободи ум.</div>
+<footer>всё сохраняется • мысли накапливаются • с каждым днём легче</footer>
+<div id="toast" class="toast"></div>
+
+<div id="supportModal" class="modal">
+    <div class="modal-card">
+        <h3>☕ Спасибо, что поддерживаете</h3>
+        <p style="font-size:0.8rem; color:#5e4b3a;">Ваша доброта помогает сайту жить</p>
+        <div class="card-number">
+            💳 5469 3800 8236 5502
+        </div>
+        <button id="copyCardBtn" class="copy-btn">📋 Скопировать номер</button>
+        <div>
+            <button id="closeModalBtn" class="close-modal">Закрыть</button>
+        </div>
+        <p style="font-size:0.65rem; margin-top:1rem; color:#a28f7a;">Даже маленькая поддержка = большой вдох</p>
+    </div>
+</div>
+
+<script>
+    let store = {
+        tasks: [],
+        ideas: [],
+        worries: [],
+        dreams: [],
+        links: [],
+        lastActiveDate: null,
+        activityDays: {},
+        streak: 0
+    };
+
+    function loadStore() {
+        const saved = localStorage.getItem('mindfluff_store');
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                store = parsed;
+                if (!store.activityDays) store.activityDays = {};
+                if (!store.tasks) store.tasks = [];
+                if (!store.ideas) store.ideas = [];
+                if (!store.worries) store.worries = [];
+                if (!store.dreams) store.dreams = [];
+                if (!store.links) store.links = [];
+            } catch(e) {}
+        }
+        markTodayActive();
+        renderAll();
+    }
+
+    function saveStore() {
+        localStorage.setItem('mindfluff_store', JSON.stringify(store));
+        renderAll();
+    }
+
+    function markTodayActive() {
+        const today = new Date().toISOString().slice(0,10);
+        if (store.lastActiveDate !== today) {
+            if (store.lastActiveDate) {
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                const yStr = yesterday.toISOString().slice(0,10);
+                if (store.lastActiveDate === yStr) {
+                    store.streak = (store.streak || 0) + 1;
+                } else {
+                    store.streak = 1;
+                }
+            } else {
+                store.streak = 1;
+            }
+            store.lastActiveDate = today;
+            store.activityDays[today] = true;
+        }
+        if (!store.streak) store.streak = 1;
+    }
+
+    function parseAndAdd(rawText) {
+        const lines = rawText.split(/\r?\n/).filter(l => l.trim().length > 0);
+        let now = Date.now();
+
+        for (let line of lines) {
+            let lower = line.toLowerCase();
+            if (line.includes('http') || line.includes('www.')) {
+                store.links.push({ id: now + Math.random(), text: line, url: line.match(/https?:\/\/[^\s]+|www\.[^\s]+/)?.[0] || line });
+                continue;
+            }
+            if (lower.includes('боюсь') || lower.includes('тревог') || lower.includes('волнуюсь') || lower.includes('страх') || lower.includes('пережива') || lower.includes('не успею')) {
+                store.worries.push({ id: now + Math.random(), text: line, step: "🎯 первый шаг: сделать 5 минут" });
+                continue;
+            }
+            if (lower.includes('хочу') || lower.includes('мечта') || lower.includes('когда-нибудь')) {
+                store.dreams.push({ id: now + Math.random(), text: line });
+                continue;
+            }
+            if (lower.includes('что если') || lower.includes('идея') || lower.includes('предложение') || line.trim().endsWith('?')) {
+                store.ideas.push({ id: now + Math.random(), text: line });
+                continue;
+            }
+            let isUrgent = lower.includes('срочно') || lower.includes('важно') || lower.includes('сегодня') || lower.includes('завтра');
+            store.tasks.push({
+                id: now + Math.random(),
+                text: line,
+                completed: false,
+                urgent: isUrgent,
+                createdAt: now
+            });
+        }
+        showCompliment();
+        saveStore();
+        showToast("✨ Мысли добавлены. Они на своём месте.");
+    }
+
+    function clearWorries() {
+        store.worries = [];
+        saveStore();
+        showToast("🧹 Тревоги убраны. Дышится легче.");
+    }
+
+    function toggleTask(taskId) {
+        const task = store.tasks.find(t => t.id == taskId);
+        if (task) {
+            task.completed = !task.completed;
+            saveStore();
+            if (task.completed) {
+                const compliments = ["🔥 Отлично!", "💪 Шаг сделан!", "🌟 Ты справляешься!", "🧠 Мозг благодарит!", "🎈 Ура!"];
+                showToast(compliments[Math.floor(Math.random() * compliments.length)]);
+            }
+        }
+    }
+
+    function showCompliment() {
+        const msgs = ["выдохни. запиши. освободи ум.", "каждая записанная мысль — подарок себе", "ты становишься легче", "мечты любят, когда их записывают"];
+        document.getElementById('complimentMsg').innerHTML = "✨ " + msgs[Math.floor(Math.random() * msgs.length)];
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.innerText = msg;
+        toast.style.opacity = '1';
+        setTimeout(() => toast.style.opacity = '0', 2000);
+    }
+
+    function showSupportModal() {
+        document.getElementById('supportModal').classList.add('visible');
+    }
+
+    function hideSupportModal() {
+        document.getElementById('supportModal').classList.remove('visible');
+    }
+
+    // ИСПРАВЛЕНО: копирование без alert, только тихое уведомление
+    function copyCardNumber() {
+        const cardNumber = "5469 3800 8236 5502";
+        navigator.clipboard.writeText(cardNumber).then(() => {
+            showToast("💳 Номер карты скопирован!");
+        }).catch(() => {
+            // fallback только если API не работает (старые браузеры)
+            const textarea = document.createElement('textarea');
+            textarea.value = cardNumber;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showToast("💳 Номер скопирован (вручную)");
+        });
+    }
+
+    function renderAll() {
+        const activeTasks = store.tasks.filter(t => !t.completed);
+        const completedTasks = store.tasks.filter(t => t.completed);
+        const allTasks = [...activeTasks, ...completedTasks];
+        
+        const tasksContainer = document.getElementById('tasksList');
+        if (allTasks.length === 0) {
+            tasksContainer.innerHTML = '<div class="empty-message">📭 нет задач — выгрузи новые мысли</div>';
+        } else {
+            tasksContainer.innerHTML = allTasks.map(task => `
+                <div class="task-item">
+                    <div class="task-left">
+                        <div class="task-check ${task.completed ? 'completed' : ''}" data-id="${task.id}"></div>
+                        <span class="task-text ${task.completed ? 'completed' : ''}">${escapeHtml(task.text)}</span>
+                        <span class="task-category">${task.urgent ? '🔴 срочно' : '📌'}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('tasksLeftBadge').innerHTML = `${activeTasks.length} осталось`;
+        document.getElementById('totalCount').innerHTML = store.tasks.length + store.ideas.length + store.worries.length + store.dreams.length + store.links.length;
+        document.getElementById('doneCount').innerHTML = store.tasks.filter(t => t.completed).length;
+        document.getElementById('streakCount').innerHTML = store.streak || 0;
+
+        document.getElementById('ideasList').innerHTML = store.ideas.length ? store.ideas.map(i => `<div class="task-item"><div class="task-left"><span>💡 ${escapeHtml(i.text)}</span></div></div>`).join('') : '<div class="empty-message">💭 пока нет идей</div>';
+        document.getElementById('worriesList').innerHTML = store.worries.length ? store.worries.map(w => `<div class="task-item"><div><span>😟 ${escapeHtml(w.text)}</span><div style="font-size:0.7rem; color:#5e4b3a; margin-top:0.2rem;">👉 ${w.step}</div></div></div>`).join('') : '<div class="empty-message">🌊 тревог нет — спокойствие</div>';
+        document.getElementById('dreamsList').innerHTML = store.dreams.length ? store.dreams.map(d => `<div class="task-item"><div class="task-left"><span>✨ ${escapeHtml(d.text)}</span></div></div>`).join('') : '<div class="empty-message">🌟 мечты ждут, чтобы их записали</div>';
+        document.getElementById('linksList').innerHTML = store.links.length ? store.links.map(l => `<div class="task-item link-item" data-url="${escapeAttr(l.url)}"><div class="task-left"><span>🔗 ${escapeHtml(l.text.substring(0, 60))}</span><span style="font-size:0.65rem;"> 🔓</span></div></div>`).join('') : '<div class="empty-message">🔗 нет сохранённых ссылок</div>';
+        
+        document.querySelectorAll('.link-item').forEach(el => {
+            el.addEventListener('click', () => window.open(el.dataset.url, '_blank'));
+        });
+        document.querySelectorAll('.task-check').forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleTask(el.dataset.id);
+            });
+        });
+
+        const container = document.getElementById('calendarDays');
+        const days = [];
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            const dStr = d.toISOString().slice(0,10);
+            const isActive = store.activityDays && store.activityDays[dStr];
+            days.push(`<span class="day ${isActive ? 'active' : ''}">${d.getDate()}</span>`);
+        }
+        container.innerHTML = days.join('');
+    }
+
+    function processNew() {
+        const raw = document.getElementById('brainInput').value;
+        if (!raw.trim()) { showToast("напиши что-нибудь..."); return; }
+        parseAndAdd(raw);
+        document.getElementById('brainInput').value = '';
+    }
+
+    function escapeHtml(str) { return String(str).replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+    function escapeAttr(str) { return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+    document.getElementById('processBtn').addEventListener('click', processNew);
+    document.getElementById('clearWorriesBtn').addEventListener('click', clearWorries);
+    document.getElementById('supportBtn').addEventListener('click', showSupportModal);
+    document.getElementById('closeModalBtn').addEventListener('click', hideSupportModal);
+    document.getElementById('copyCardBtn').addEventListener('click', copyCardNumber);
+    document.getElementById('supportModal').addEventListener('click', (e) => { if (e.target === document.getElementById('supportModal')) hideSupportModal(); });
+
+    loadStore();
+</script>
+</body>
+</html>
